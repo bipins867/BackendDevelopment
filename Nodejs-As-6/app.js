@@ -1,23 +1,42 @@
 const http=require('http');
+const fs=require('fs')
 
 const server=http.createServer((req,res)=>{
     const url=req.url;
+    const method=req.method;
 
-    if(url=='/home'){
-        res.write('<b>Welcome Home</b>')
+    if (url=='/'){
+        const data=fs.readFileSync('Hello.txt','utf-8');
+        res.write('<html><body><form action="/message" method="POST" id="form">')
+
+        res.write("<label id='label'>"+data+"</label><br><input type='text' name='msg'/><input type='submit' value='sumbit'/></form>")
+        res.write('</body></html>')
+        return res.end();
     }
-    
-    else if(url=='/about'){
-        res.write('<b>Welcom to about us</b>')
+
+    if(url=='/message' && method=='POST'){
+
+        const body=[];
+
+        req.on('data',chunk=>{
+            body.push(chunk);
+        })
+
+        req.on('end',()=>{
+
+            const parseData=Buffer.concat(body).toString();
+            
+            var data=parseData.split('=')[1];
+            
+            fs.writeFileSync('Hello.txt',data);
+
+        })
+
+
+        res.setHeader('Location','/')
+        res.statusCode='302'
+        res.end();
     }
-    
-    else if(url=='/node'){
-        res.write('<b>Welcome to my node js project</b>')
-    }
-    else{
-        res.write('Page 404 not found')
-    }
-    res.end()
 })
 
 
