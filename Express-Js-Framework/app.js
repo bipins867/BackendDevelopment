@@ -1,18 +1,27 @@
-
+const bodyParse=require('body-parser')
 const express=require('express')
 
 const app=express();
 
-app.use((req,res,next)=>{
-    console.log("----------------")
-    console.log("Start MidWare");
-    next();
+app.use(bodyParse.urlencoded({extended:false}))
+app.use('/add-product',(req,res)=>{
+    res.send(`
+    <form method='POST' action='/message'>
+    <input type='text' name='title' placeholder='Enter the product name'/><br>
+    <input type='text' name='size' placeholder ='Product Size :-'/><br>
+    <input type='submit' value='submit'/>
+    </form>
+    `)
 })
 
-app.use((req,res,next)=>{
+app.post('/message',(req,res)=>{
+   
+    console.log(req.body)
+    res.redirect('/')
+})
 
-    console.log("End MidWare");
-    res.send({key:"hello1"})
+app.use('/',(req,res)=>{
+    res.send("<h1>This is default home page</h1>")
 })
 
 
