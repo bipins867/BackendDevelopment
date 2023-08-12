@@ -1,28 +1,19 @@
 const bodyParse=require('body-parser')
 const express=require('express')
 
+const adminRoutes=require('./Routes/admin')
+const shopRoutes=require('./Routes/shop')
+
+
 const app=express();
 
 app.use(bodyParse.urlencoded({extended:false}))
-app.use('/add-product',(req,res)=>{
-    res.send(`
-    <form method='POST' action='/message'>
-    <input type='text' name='title' placeholder='Enter the product name'/><br>
-    <input type='text' name='size' placeholder ='Product Size :-'/><br>
-    <input type='submit' value='submit'/>
-    </form>
-    `)
-})
 
-app.post('/message',(req,res)=>{
-   
-    console.log(req.body)
-    res.redirect('/')
-})
+app.use('/admin',adminRoutes);
+app.use(shopRoutes);
 
 app.use('/',(req,res)=>{
-    res.send("<h1>This is default home page</h1>")
+    //res.statusCode=404
+    res.status(404).send('<h1>Page not found 404 !</h1>')
 })
-
-
 app.listen(3000)
