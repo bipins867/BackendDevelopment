@@ -1,0 +1,16 @@
+{
+  "name": "nodejs-as-6",
+  "version": "1.0.0",
+  "description": "This is default discription",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app.js",
+    "hello": "node app.js"
+  },
+  "author": "Mr Bipin Singh",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}

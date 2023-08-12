@@ -20,6 +20,7 @@ var handler=(req,res)=>{
 
         req.on('data',chunk=>{
             body.push(chunk);
+            
         })
 
         req.on('end',()=>{
@@ -42,6 +43,6 @@ var handler=(req,res)=>{
 //module.exports=handler;
 
 exports.handler=handler;
-exports.text="This is something else"
+exports.text="This is something else okay let's see"
 
 //module.exports={handler:handler,text:"This is some text"}
