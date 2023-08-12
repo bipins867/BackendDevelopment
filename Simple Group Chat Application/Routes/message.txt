@@ -1,0 +1,1 @@
+ADMIN=Hello Dear<br>ADMIN=MY name   is khan<br>bipins867@gmail.com=MY name   is khan<br>
