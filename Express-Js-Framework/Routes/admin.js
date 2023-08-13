@@ -1,16 +1,12 @@
 const express=require('express');
+const path=require('path')
 
 
 const app=express.Router();
 
+
 app.get('/add-product',(req,res)=>{
-    res.send(`
-    <form method='POST' action='/admin/message'>
-    <input type='text' name='title' placeholder='Enter the product name'/><br>
-    <input type='text' name='size' placeholder ='Product Size :-'/><br>
-    <input type='submit' value='submit'/>
-    </form>
-    `)
+   res.sendFile(path.join(__dirname,'../','Templates','admin.html'))
 })
 
 app.post('/message',(req,res)=>{
