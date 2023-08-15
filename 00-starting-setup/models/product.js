@@ -7,6 +7,8 @@ const p = path.join(
   'products.json'
 );
 
+
+
 const getProductsFromFile = cb => {
   fs.readFile(p, (err, fileContent) => {
     if (err) {
@@ -35,6 +37,11 @@ module.exports = class Product {
     });
   }
 
+  static saveAll(data){
+    fs.writeFileSync(p,data)
+    
+  }
+
   static fetchAll(cb) {
     getProductsFromFile(cb);
   }
@@ -45,5 +52,23 @@ module.exports = class Product {
     cb(prodId)
    })
    
+  }
+
+  static deleteById(id,cb){
+    fs.readFile(p,'utf-8',(err,data)=>{
+      if(!err){
+
+        let pdata=JSON.parse(data)
+
+        let index=pdata.findIndex(product=>product.id==id)
+        pdata.splice(index,1)
+        Product.saveAll(JSON.stringify(pdata))
+        cb()
+
+      }
+      else{
+        console.log('Error in deleting the product')
+      }
+    })
   }
 };
