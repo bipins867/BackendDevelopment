@@ -1,23 +1,6 @@
-const fs = require('fs');
-const path = require('path');
 
-const p = path.join(
-  path.dirname(process.mainModule.filename),
-  'data',
-  'products.json'
-);
-
-
-
-const getProductsFromFile = cb => {
-  fs.readFile(p, (err, fileContent) => {
-    if (err) {
-      cb([]);
-    } else {
-      cb(JSON.parse(fileContent));
-    }
-  });
-};
+const db=require('../util/database')
+const cart=require('./cart')
 
 module.exports = class Product {
   constructor(title, imageUrl, description, price) {
@@ -25,50 +8,34 @@ module.exports = class Product {
     this.imageUrl = imageUrl;
     this.description = description;
     this.price = price;
+    this.id=null;
   }
 
   save() {
-    this.id=new Date().getTime();
-    getProductsFromFile(products => {
-      products.push(this);
-      fs.writeFile(p, JSON.stringify(products), err => {
-        console.log(err);
-      });
-    });
+    return db.execute('insert into products(title,imageUrl,description,price) values(?,?,?,?)',
+    [this.title,this.imageUrl,this.description,this.price])
   }
 
   static saveAll(data){
-    fs.writeFileSync(p,data)
+    
     
   }
 
   static fetchAll(cb) {
-    getProductsFromFile(cb);
+    return db.execute('select * from products');
   }
-
-  static findById(id,cb){
-   getProductsFromFile(product=>{
-    const prodId=product.find(product=>id==product.id)
-    cb(prodId)
-   })
+  updateProduct(){
+    return db.execute('update products set title=?, imageUrl=?,description=?,price=? where id=?',
+    [this.title,this.imageUrl,this.description,this.price,this.id])
+  }
+  static findById(id){
    
+    return db.execute('select * from products where id = ?',[id])
   }
 
-  static deleteById(id,cb){
-    fs.readFile(p,'utf-8',(err,data)=>{
-      if(!err){
+  static deleteById(id){
+    
+    return db.execute('delete from products where id= ?',[id])
 
-        let pdata=JSON.parse(data)
-
-        let index=pdata.findIndex(product=>product.id==id)
-        pdata.splice(index,1)
-        Product.saveAll(JSON.stringify(pdata))
-        cb()
-
-      }
-      else{
-        console.log('Error in deleting the product')
-      }
-    })
   }
 };
