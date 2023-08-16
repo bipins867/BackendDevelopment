@@ -1,0 +1,18 @@
+{
+  "name": "full-stack-book-apoinment",
+  "version": "1.0.0",
+  "description": "Full Stack Book Apoinment",
+  "main": "app.js",
+  "scripts": {
+    "start": "nodemon app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Bipin Singh",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "mysql2": "^3.6.0",
+    "path": "^0.12.7",
+    "sequelize": "^6.32.1"
+  }
+}
