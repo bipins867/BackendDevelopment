@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Expense Tracker</title>
+  
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+
+<body>
+  <div class="container mt-4">
+    <h2>Expense Tracker</h2>
+    <form>
+      <div class="form-row">
+        <div class="col-md-4 mb-3">
+          <label for="amount">Amount</label>
+          <input type="text" class="form-control" id="amount" placeholder="Enter amount">
+        </div>
+        <div class="col-md-4 mb-3">
+          <label for="description">Description</label>
+          <input type="text" class="form-control" id="description" placeholder="Enter description">
+        </div>
+        <div class="col-md-4 mb-3">
+          <label for="category">Category</label>
+          <select class="form-control" id="category">
+            <option value="movie">Movie</option>
+            <option value="school">School</option>
+            <option value="fuel">Fuel</option>
+            <option value="market">Market</option>
+          </select>
+        </div>
+      </div>
+      <button type="button" class="btn btn-primary" id="addExpense">Add Expense</button>
+    </form>
+
+    <h3 class="mt-4">Expense List</h3>
+    <ul class="list-group" id="expenseList">
+      
+      <!--<li class="list-group-item">
+        <span class="mr-2">Amount: $50</span>
+        <span class="mr-2">Description: Lunch</span>
+        <span class="mr-2">Category: Market</span>
+        <button type="button" class="btn btn-danger btn-sm" onclick="deleteExpense(this)">Delete</button>
+        <button type="button" class="btn btn-info btn-sm" onclick="editExpense(this)">Edit</button>
+      </li>-->
+      
+    </ul>
+  </div>
+
+  <!-- Bootstrap JS (Make sure it's included after the content, right before the closing body tag) -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.min.js"></script>
+  <script src="script.js"></script>
+</body>
+
+</html>
