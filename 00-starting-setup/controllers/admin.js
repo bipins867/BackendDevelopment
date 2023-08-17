@@ -14,13 +14,15 @@ exports.postAddProduct = (req, res, next) => {
   const price = req.body.price;
   const description = req.body.description;
   
-  
-  Product.create({
+  req.user.createProduct({
     title:title,
     imageUrl:imageUrl,
     price:price,
-    description:description
+    description:description,
+    
   })
+  
+  
   .then(result=>{
     res.redirect('/')
   })
@@ -50,7 +52,8 @@ exports.postEditProduct = (req, res, next) => {
     title:rbody.title,
     imageUrl:rbody.imageUrl,
     price:rbody.price,
-    description:rbody.description
+    description:rbody.description,
+    userId:req.user.id
   },{
     where:{id:rbody.id}
   })
