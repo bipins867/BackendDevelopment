@@ -17,18 +17,6 @@ document.getElementById('login-form').addEventListener('submit',event=>{
             alert("login successfull");
             labelStatus.innerHTML="<b>Login Successfull</b>"
            }
-           else if(status==214){
-            labelStatus.innerHTML="<b>User Don't Exists!</b>"
-            
-           }
-           else if(status==213){
-            labelStatus.innerHTML="<b>Invalid Credentials!</b>"
-           
-           }
-           else if(status==215){
-            labelStatus.innerHTML="<b>Invalid Password!</b>"
-           
-           }
            else{
             labelStatus.innerHTML="<b>Something Went Wrong!</b>"
            
@@ -36,10 +24,28 @@ document.getElementById('login-form').addEventListener('submit',event=>{
            
         })
         .catch(err=>{
-            console.log("ERROR")
+              const status=err.response.status;
+              if(status==404){
+                labelStatus.innerHTML="<b>User Don't Exists!</b>"
+                
+               }
+               else if(status==405){
+                labelStatus.innerHTML="<b>Invalid Credentials!</b>"
+               
+               }
+               else if(status==401){
+                labelStatus.innerHTML="<b>Invalid Password!</b>"
+               
+               }
+               else{
+                labelStatus.innerHTML="<b>Something Went Wrong!</b>"
+               
+               }
+               
         })
     }
     catch(err){
-        console.log(err)
+        
+        console.log("Error")
     }
 })

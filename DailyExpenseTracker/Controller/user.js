@@ -48,12 +48,12 @@ exports.postLogin=async(req,res,next)=>{
     obj={email:req.body.email,password:req.body.password}
 
     if(!loginValidation(obj))
-    return res.status(213).json({error:"Invalid Credentials!"})
+    return res.status(405).json({error:"Invalid Credentials!"})
 
     const user=await User.findOne({where:{email:obj.email}})
 
     if(!user){
-        res.status(214).json({error:"User don't Exists"})
+        res.status(404).json({error:"User don't Exists"})
     }
     else
     {
@@ -61,7 +61,7 @@ exports.postLogin=async(req,res,next)=>{
             res.json({status:"Login Successfull"})
         }
         else{
-            res.status(215).json({error:"Invalid Password"})
+            res.status(401).json({error:"Invalid Password"})
         }
     }
 }
