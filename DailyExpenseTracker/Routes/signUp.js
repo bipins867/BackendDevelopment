@@ -1,11 +1,11 @@
 const express=require('express')
-const signUpCont=require('../Controller/signUp')
+const userCont=require('../Controller/user')
 
 const router=express.Router()
 
 
-router.get('/signUp',signUpCont.getSignUp)
-router.post("/signUp",signUpCont.postSignUp)
 
+router.post("/signUp",userCont.postSignUp)
+router.post('/login',userCont.postLogin)
 
 module.exports=router
