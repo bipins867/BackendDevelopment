@@ -16,6 +16,7 @@ document.getElementById('login-form').addEventListener('submit',event=>{
            if(status==200){
             alert("login successfull");
             labelStatus.innerHTML="<b>Login Successfull</b>"
+            window.location='../Expense/index.html'
            }
            else{
             labelStatus.innerHTML="<b>Something Went Wrong!</b>"
