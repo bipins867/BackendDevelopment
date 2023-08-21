@@ -1,6 +1,6 @@
 
 const User=require('../models/User')
-
+const bcrypt=require('bcrypt')
 
 function signUpValidation(obj){
     return true;
@@ -17,51 +17,65 @@ exports.postSignUp=(req,res,next)=>{
     obj={name:name,email:email,password:password}
     if(!signUpValidation(obj))
         return res.status(503).json({error:"Invalid Credentials"})
-    User.findOne({where:{
-        email:email
-    }})
-    .then(user=>{
-        
+        User.findOne({where:{
+            email:email
+        }})
+        .then(user=>{
+            
 
-        if(user){
-            res.status(201).json({status:'User Already Exist'})
-        }
-        else
-        {
-            User.create(obj)
-            .then(result=>{
-                res.json({status:"SignUp Successfull"})
-            })
-            .catch(err=>{
-                console.log(err)
-            })
-        }
-    })
-    .catch(err=>{
-        console.log(err)
-    })
+            if(user){
+                res.status(201).json({status:'User Already Exist'})
+            }
+            else
+            {
+                bcrypt.hash(obj.password,10,async (err,passw)=>{
+                    if(err)
+                    console.log(err)
+                    obj.password=passw
+                    User.create(obj)
+                    .then(result=>{
+                        res.json({status:"SignUp Successfull"})
+                    })
+                    .catch(err=>{
+                        console.log(err)
+                    })
+                })
+            }
+        })
+        .catch(err=>{
+            console.log(err)
+        })
     
     //res.json({id:2})
 }
 
 exports.postLogin=async(req,res,next)=>{
     obj={email:req.body.email,password:req.body.password}
-
-    if(!loginValidation(obj))
-    return res.status(405).json({error:"Invalid Credentials!"})
-
-    const user=await User.findOne({where:{email:obj.email}})
-
-    if(!user){
-        res.status(404).json({error:"User don't Exists"})
-    }
-    else
+    try
     {
-        if(user.password==obj.password){
-            res.json({status:"Login Successfull"})
+        if(!loginValidation(obj))
+        return res.status(405).json({error:"Invalid Credentials!"})
+
+        const user=await User.findOne({where:{email:obj.email}})
+
+        if(!user){
+            res.status(404).json({error:"User don't Exists"})
         }
-        else{
-            res.status(401).json({error:"Invalid Password"})
+        else
+        {
+            bcrypt.compare(obj.password,user.password,async(err,response)=>{
+                if(err)
+                    throw new Error("Something went wrong")
+                
+                if(response)
+                    res.json({status:"Login Successfull"})
+                else
+                res.status(401).json({error:"Invalid Password"})
+            })
+            
         }
+    }
+    catch(err){
+        console.log(err)
     }
 }
