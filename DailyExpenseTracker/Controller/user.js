@@ -1,6 +1,7 @@
 
 const User=require('../models/User')
 const bcrypt=require('bcrypt')
+const jwt=require('jsonwebtoken')
 
 function signUpValidation(obj){
     return true;
@@ -68,7 +69,12 @@ exports.postLogin=async(req,res,next)=>{
                     throw new Error("Something went wrong")
                 
                 if(response)
-                    res.json({status:"Login Successfull"})
+                {
+                    const token=jwt.sign({name:user.dataValues.name,id:user.dataValues.id},'SecretKey')
+                    //console.log(token)
+                    res.json({status:"Login Successfull",token:token})
+                }
+                    
                 else
                 res.status(401).json({error:"Invalid Password"})
             })

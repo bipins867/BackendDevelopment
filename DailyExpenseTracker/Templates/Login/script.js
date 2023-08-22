@@ -16,6 +16,8 @@ document.getElementById('login-form').addEventListener('submit',event=>{
            if(status==200){
             alert("login successfull");
             labelStatus.innerHTML="<b>Login Successfull</b>"
+            const token=result.data.token;
+            localStorage.setItem('token',token)
             window.location='../Expense/index.html'
            }
            else{

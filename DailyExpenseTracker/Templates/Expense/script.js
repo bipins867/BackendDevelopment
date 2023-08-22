@@ -28,9 +28,14 @@ function addItem(obj){
 
 
     deleteButton.addEventListener('click',event=>{
+        const token=localStorage.getItem('token')
+
+        if(token==null)
+        window.location.href='../Login/index.html'
+
+        const headers={authorization:token}
         
- 
-        axios.get(`http://localhost:3000/Expense/getDeleteExpense/${obj.id}`)
+        axios.get(`http://localhost:3000/Expense/getDeleteExpense/${obj.id}`,{headers})
         .then(result=>{
             console.log(result)
             list.removeChild(li)
@@ -52,8 +57,14 @@ const addFunction=event=>{
         description:inputDescription.value,
         category:inputCategory.value
     }
+
+    const token=localStorage.getItem('token')
+
+    if(token==null)
+    window.location.href='../Login/index.html'
+
     
-    axios.post('http://localhost:3000/Expense/postAddExpense/',obj)
+    axios.post('http://localhost:3000/Expense/postAddExpense/',obj,{headers:{Authorization:token}})
     .then(result=>{
        
         addItem(result.data)
@@ -69,8 +80,12 @@ const addFunction=event=>{
 
 form.onsubmit=addFunction
 async function getProducts(){
+    const token=localStorage.getItem('token')
 
-    const result=await axios.get('http://localhost:3000/Expense/getExpenses')
+    if(token==null)
+    window.location.href='../Login/index.html'
+    const headers={authorization:token}
+    const result=await axios.get('http://localhost:3000/Expense/getExpenses',{headers})
     
     for (const product of result.data){
         addItem(product)

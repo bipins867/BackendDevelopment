@@ -6,10 +6,16 @@ const db=require('./database')
 const userRoutes=require('./Routes/user')
 const expenseRoutes=require('./Routes/expense')
 
+const User=require('./models/User')
+const Expense=require('./Models/Expense')
+
+
 app=express()
 app.use(cors())
 app.use(bodyParser.json({extends:false}))
 
+User.hasMany(Expense)
+Expense.belongsTo(User)
 
 
 app.use('/User',userRoutes)

@@ -4,9 +4,9 @@ const Expense=require('../Models/Expense')
 
 exports.postAddExpense=(req,res,next)=>{
 
-    const obj={amount:req.body.amount,description:req.body.description,category:req.body.category}
+    const obj={amount:req.body.amount,description:req.body.description,category:req.body.category,userId:req.user.id}
 
-    Expense.create(obj)
+    req.user.createExpense(obj)
     .then(result=>{
         res.json(result.dataValues)
     })
@@ -17,7 +17,7 @@ exports.postAddExpense=(req,res,next)=>{
 
 
 exports.getExpenses=(req,res,next)=>{
-    Expense.findAll()
+    req.user.getExpenses({where:{userId:req.user.id}})
     .then(result=>{
         res.json(result)
     })
@@ -28,7 +28,7 @@ exports.getExpenses=(req,res,next)=>{
 
 exports.getDeleteExpense=(req,res,next)=>{
     const id=req.params.id;
-    Expense.findByPk(id)
+    Expense.findOne({where:{id:id,userId:req.user.id}})
     .then(result=>{
         return result.destroy();
 
