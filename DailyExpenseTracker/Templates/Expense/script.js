@@ -6,6 +6,10 @@ const inputDescription=document.getElementById('description')
 const inputCategory=document.getElementById('category')
 const list=document.getElementById('expense-list')
 const buttonPremium=document.getElementById('premium-button')
+const labelPremium=document.getElementById('premium-label')
+const buttonShowLeaderboard=document.getElementById('show-leaderboard')
+const labelLedarboard=document.getElementById('label-leaderboard')
+const listLeaderboard=document.getElementById('leaderboard-list')
 
 
 function addItem(obj){
@@ -92,8 +96,16 @@ async function getProducts(){
     const result=await axios.get('http://localhost:3000/Expense/getExpenses',{headers})
     
     if(result.data.isPremium)
+    {
+        labelPremium.textContent="Premimum User"
         buttonPremium.style.display = 'none';
 
+    }
+    else{
+        buttonShowLeaderboard.style.display='none';
+    }
+    labelLedarboard.style.display='none'
+       
     for (const product of result.data.expense){
         addItem(product)
     }
@@ -122,6 +134,9 @@ buttonPremium.onclick=async event=>{
                 if(res.status==201 || res.status==200)
                 {
                     buttonPremium.style.display = 'none';
+                    labelPremium.textContent="Premimum User"
+                    
+                    buttonShowLeaderboard.style.display='Block';
                     alert("Transaction Successfulll")
                 }
                 else{
@@ -151,3 +166,38 @@ buttonPremium.onclick=async event=>{
     })
 
 }
+
+function addLeaderboardItems(obj){
+    var data=`Name :- ${obj.name} || Total Expense :- ${obj.sum}`
+    
+    const li=document.createElement('li')
+    li.appendChild(document.createTextNode(data))
+
+    listLeaderboard.appendChild(li)
+}
+
+buttonShowLeaderboard.onclick=async event=>{
+    const token=localStorage.getItem('token')
+    //buttonShowLeaderboard.disabled=true;
+    if(token==null)
+    window.location.href='../Login/index.html'
+    const headers={authorization:token}
+    const result=await axios.get('http://localhost:3000/Premium/showLeaderboard',{headers})
+    
+    labelLedarboard.style.display='Block'
+    //listLeaderboard.remove(listLeaderboard.children)
+    
+    while(listLeaderboard.firstChild){
+        
+        listLeaderboard.removeChild(listLeaderboard.firstChild)
+    }
+    
+    
+    if(result.data){
+        result.data.forEach(obj => {
+            addLeaderboardItems(obj)
+        });
+    }
+
+
+}   

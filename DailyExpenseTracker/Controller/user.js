@@ -2,6 +2,7 @@
 const User=require('../models/User')
 const bcrypt=require('bcrypt')
 const jwt=require('jsonwebtoken')
+const SumExpense=require('../Models/SumExpense')
 
 function signUpValidation(obj){
     return true;
@@ -34,7 +35,10 @@ exports.postSignUp=(req,res,next)=>{
                     console.log(err)
                     obj.password=passw
                     User.create(obj)
-                    .then(result=>{
+                    .then(async data=>{
+                        const user=data.dataValues;
+                        await SumExpense.create({UserId:user.id,sum:0,name:user.name})
+            
                         res.json({status:"SignUp Successfull"})
                     })
                     .catch(err=>{
