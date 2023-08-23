@@ -18,8 +18,10 @@ exports.postAddExpense=(req,res,next)=>{
 
 exports.getExpenses=(req,res,next)=>{
     req.user.getExpenses({where:{userId:req.user.id}})
-    .then(result=>{
-        res.json(result)
+    .then(expense=>{
+
+        const data={expense,isPremium:req.user.isPremium}
+        res.json(data)
     })
     .catch(err=>{
         console.log(err)

@@ -1,14 +1,17 @@
+require('dotenv').config()
 const express=require('express')
 const cors=require('cors')
 const bodyParser=require('body-parser')
 
+
 const db=require('./database')
 const userRoutes=require('./Routes/user')
 const expenseRoutes=require('./Routes/expense')
+const purchaseRoutes=require('./Routes/purchase')
 
 const User=require('./models/User')
 const Expense=require('./Models/Expense')
-
+const Order=require('./Models/Order')
 
 app=express()
 app.use(cors())
@@ -18,13 +21,17 @@ User.hasMany(Expense)
 Expense.belongsTo(User)
 
 
+User.hasMany(Order)
+Order.belongsTo(User)
+
 app.use('/User',userRoutes)
 app.use('/Expense',expenseRoutes)
+app.use('/Purchase',purchaseRoutes)
 app.use('/',(req,res,next)=>{
     res.status(404).json({err:"Page not found"})
 })
 
-db.sync({alter:true})
+db.sync()
 .then(()=>{
     
 app.listen(3000)

@@ -12,5 +12,9 @@ module.exports=sequelize.define('User',{
         type:Sequelize.STRING,
         unique:true,
     },
-    password:Sequelize.STRING
+    password:Sequelize.STRING,
+    isPremium:{
+        type:Sequelize.BOOLEAN,
+        defaultValue:false
+    }
 })
