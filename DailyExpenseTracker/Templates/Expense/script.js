@@ -58,7 +58,7 @@ function addItem(obj){
     
 }
 
-const addFunction=event=>{
+const addFunction=async event=>{
     event.preventDefault();
     obj={
         amount:inputAmount.value,
@@ -71,17 +71,22 @@ const addFunction=event=>{
     if(token==null)
     window.location.href='../Login/index.html'
 
-    
-    axios.post('http://localhost:3000/Expense/postAddExpense/',obj,{headers:{Authorization:token}})
-    .then(result=>{
-       
+    try{
+            
+            
+        const result=await axios.post('http://localhost:3000/Expense/postAddExpense/',obj,{headers:{Authorization:token}})
+        
         addItem(result.data)
         inputAmount.value=''
         inputDescription.value=''
         inputCategory.value=''
-        
-    })
-    .catch(err=>console.log(err))
+            
+    }
+     
+    catch(error)
+    {
+       console.log("Something went wrong")
+    }
 
     
 }
