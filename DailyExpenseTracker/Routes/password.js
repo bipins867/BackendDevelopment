@@ -6,6 +6,7 @@ const router=express.Router();
 
 
 router.post('/forgetPassword',emailAuthentication.authenticate,passwordCont.forgetPassword)
-
+router.get('/resetPassword/:uuid',emailAuthentication.authenticateResetLink,passwordCont.resetPassword)
+router.get('/updatePassword/:uuid',passwordCont.getUpdatePassword)
 
 module.exports=router

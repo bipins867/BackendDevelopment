@@ -1,26 +1,32 @@
 
 const MailService=require('../Utils/MailService')
-
-const otpList={}
+const ForgetPasswordRequest=require('../Models/ForgotPasswordRequest')
+const uuid=require('uuid')
+const sequelize=require('../database')
+const path=require('path')
+const User=require('../Models/User')
+const bcrypt=require('bcrypt')
 
 
 exports.forgetPassword=async(req,res,next)=>{
+    const transaction=await sequelize.transaction();
+
     try{
         
         
         const email=req.user.email;
-        const otp=MailService.generateOtp(1000,10000)
-        const subject="Otp for Forget Password"
-        const body=`Your otp for your email:-  ${email}  is  ${otp}`
-        const result=await MailService.sendMail(email,subject,body)
-       
-        if (result){
-            otpList[email]=otp;
-
-            res.json({status:"Otp Sent Successfully"})
-            setTimeout(()=>{
-                delete otpList[email]
-            },60*2*1000)
+        const uids=uuid.v4();
+        const link=`http://localhost:3000/Password/resetPassword/${uids}`
+        const subject="Reset Password"
+        const body=`Your reset link is :-\n \n${link}`
+        const result1=await MailService.sendMail(email,subject,body)
+        
+        const result2=await ForgetPasswordRequest.create({UserId:req.user.id,uuids:uids,isactive:true})
+        
+        if (result1 && result2){
+            
+            transaction.commit();
+            res.json({status:"Reset link Sent Successfully"})
         }
         else
         {
@@ -28,12 +34,58 @@ exports.forgetPassword=async(req,res,next)=>{
         }
     }
     catch(err)
-    {
+    {   
+        console.log(err)
+        transaction.rollback();
         res.status(500).json({error:'Something went Wrong!'})
     }
    
 }
 
-exports.submitOtp=async(req,res,next)=>{
-    
+exports.resetPassword=async(req,res,next)=>{
+    const fpr=req.ForgetPasswordRequest;
+    const uuid=req.params.uuid;
+    try{
+        const result=await fpr.update({isactive:false})
+        
+        res.send(`
+                <form id='form' action='/Password/updatePassword/${uuid}'>
+                <label>Enter the password</label>
+                <input type='password' name='password' id='password'>
+                <input type='submit' value='submit'>
+
+                </form>
+        
+        `)
+    }
+    catch(err)
+    {
+        
+        res.send("<h1>Somehting went wrong</h1>")
+    }
+
+    res.end();
+
 }
+
+exports.getUpdatePassword=async(req,res,next)=>{
+    const uuid=req.params.uuid;
+    const password=req.query.password;
+    try{
+
+        const forgetPassword=await ForgetPasswordRequest.findOne({where:{uuids:uuid}})
+        
+        const user=await User.findOne({id:forgetPassword.userId})
+        const passwordHash=await bcrypt.hash(password,10)
+        await user.update({password:passwordHash})
+        res.send("Password Reset Successfully!")
+    }
+    catch(err)
+    {
+        console.log(err)
+        res.send("Soemthing went wrong")
+    }
+    res.end();
+}
+
+

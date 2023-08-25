@@ -4,6 +4,7 @@ require('dotenv').config()
 const express=require('express')
 const cors=require('cors')
 const bodyParser=require('body-parser')
+const path=require('path')
 
 
 const db=require('./database')
@@ -17,9 +18,13 @@ const User=require('./models/User')
 const Expense=require('./Models/Expense')
 const Order=require('./Models/Order')
 const SumExpense=require('./Models/SumExpense')
+const ForgetPasswordRequest=require('./Models/ForgotPasswordRequest')
 
 
 app=express()
+
+
+//app.use(express.static(path.join(__dirname, 'Public')));
 
 app.use(cors())
 app.use(bodyParser.json({extends:false}))
@@ -35,11 +40,18 @@ Expense.belongsTo(User)
 User.hasMany(Order)
 Order.belongsTo(User)
 
+
+User.hasMany(ForgetPasswordRequest)
+ForgetPasswordRequest.belongsTo(User)
+
 app.use('/User',userRoutes)
 app.use('/Expense',expenseRoutes)
 app.use('/Purchase',purchaseRoutes)
 app.use('/Premium',premimumRoutes)
 app.use('/Password',passwordRoutes)
+
+
+
 
 app.use('/',(req,res,next)=>{
     res.status(404).json({err:"Page not found"})
