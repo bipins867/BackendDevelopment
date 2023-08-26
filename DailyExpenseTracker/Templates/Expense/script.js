@@ -10,6 +10,8 @@ const labelPremium=document.getElementById('premium-label')
 const buttonShowLeaderboard=document.getElementById('show-leaderboard')
 const labelLedarboard=document.getElementById('label-leaderboard')
 const listLeaderboard=document.getElementById('leaderboard-list')
+const tableYearly=document.getElementById('yearly-table')
+const tableMonthly=document.getElementById('monthly-table')
 
 
 function addItem(obj){
@@ -206,3 +208,56 @@ buttonShowLeaderboard.onclick=async event=>{
 
 
 }   
+
+
+function add2MonthlyTable(date,description,category,expense){
+    const tr=document.createElement('tr')
+    const td1=document.createElement('td')
+    const td2=document.createElement('td')
+    const td3=document.createElement('td')
+    const td4=document.createElement('td')
+
+    const options = { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' };
+    const formattedDate = date.toLocaleDateString('en-US', options);
+
+
+    td1.textContent=formattedDate;
+    td2.textContent=description;
+    td3.textContent=category;
+    td4.textContent=expense;
+
+    tr.appendChild(td1)
+    tr.appendChild(td2)
+    tr.appendChild(td3)
+    tr.appendChild(td4)
+
+    tableMonthly.appendChild(tr)
+    
+    
+}
+
+function add2MonthlyTable(month,expense){
+    const tr=document.createElement('tr')
+    const td1=document.createElement('td')
+    const td2=document.createElement('td')
+    
+
+    
+    
+
+    td1.textContent=month;
+    td2.textContent=expense;
+   
+    
+
+    tr.appendChild(td1)
+    tr.appendChild(td2)
+    
+
+    tableYearly.appendChild(tr)
+    
+    
+}
+
+
+
