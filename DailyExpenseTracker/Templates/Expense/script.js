@@ -17,6 +17,7 @@ const buttonDownload=document.getElementById('download')
 const tableOldFiles=document.getElementById('old-files')
 const buttonPrev=document.getElementById('prevButton')
 const buttonNext=document.getElementById('nextButton')
+const inputPageLimit=document.getElementById('rowsPerPage')
 
 var page=1;
 
@@ -125,7 +126,7 @@ async function getExpenseByPage(page){
     if(token==null)
     window.location.href='../Login/index.html'
     
-    const pageLimit=4
+    const pageLimit=localStorage.getItem('pageLimit')
     const headers={authorization:token,pageLimit}
     const result=await axios.get(`http://localhost:3000/Expense/getExpenseByPage/${page}`,{headers})
 
@@ -157,8 +158,16 @@ buttonPrev.onclick=(event)=>{
     getExpenseByPage(page)
 }
 document.addEventListener('DOMContentLoaded',(event)=>{
-    buttonPrev.textContent='<'
-    buttonNext.textContent='>'
+    buttonPrev.textContent='< Prev Page'
+    buttonNext.textContent='Next Page > '
+    var pageLimit=localStorage.getItem('pageLimit')
+    if(pageLimit==null){
+        pageLimit=inputPageLimit.value;
+        localStorage.setItem('pageLimit',pageLimit)
+    }
+    else{
+        inputPageLimit.value=pageLimit
+    }
     getProducts();
     getExpenseByPage(1);
 })
@@ -400,3 +409,6 @@ buttonDownload.onclick=async event=>{
 }
 
 
+inputPageLimit.onchange=event=>{
+    localStorage.setItem('pageLimit',inputPageLimit.value)
+}
