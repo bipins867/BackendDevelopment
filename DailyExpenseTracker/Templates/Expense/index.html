@@ -27,6 +27,7 @@
     <button type="submit">Add Expense</button>
     <button type="button" id="premium-button">Buy Premium</button>
   </form>
+  <button type="button" id="download" style="display: none;">Download</button>
   <br>
   
   <label id="premium-label"></label>
@@ -38,9 +39,22 @@
   <br>
   <h1><label id="label-leaderboard">Leaderboard</label></h1>
   <ul id="leaderboard-list"></ul>
-
-  <div id="premium-data" style="display: block;">
-    <center><h3>Monthly Expense</h3>
+  
+  
+  <div id="premium-data" style="display: none;">
+    <center>
+      <h3>Old Files</h3>
+      <table id="old-files" border="2">
+        <tr>
+          <th>File Name</th>
+          <th>Download</th>
+        </tr>
+      </table>  
+      
+      
+    
+    
+      <h3>Monthly Expense</h3>
     <table id="monthly-table" border="2">
       <tr>
         <th>Date</th>

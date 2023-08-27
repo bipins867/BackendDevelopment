@@ -19,6 +19,7 @@ const Expense=require('./Models/Expense')
 const Order=require('./Models/Order')
 const SumExpense=require('./Models/SumExpense')
 const ForgetPasswordRequest=require('./Models/ForgotPasswordRequest')
+const FileDownload=require('./Models/FileDownload')
 
 
 app=express()
@@ -43,6 +44,10 @@ Order.belongsTo(User)
 
 User.hasMany(ForgetPasswordRequest)
 ForgetPasswordRequest.belongsTo(User)
+
+User.hasMany(FileDownload)
+FileDownload.belongsTo(User)
+
 
 app.use('/User',userRoutes)
 app.use('/Expense',expenseRoutes)

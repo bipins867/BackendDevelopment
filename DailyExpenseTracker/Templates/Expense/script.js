@@ -12,7 +12,9 @@ const labelLedarboard=document.getElementById('label-leaderboard')
 const listLeaderboard=document.getElementById('leaderboard-list')
 const tableYearly=document.getElementById('yearly-table')
 const tableMonthly=document.getElementById('monthly-table')
-
+const divPremiumData=document.getElementById('premium-data')
+const buttonDownload=document.getElementById('download')
+const tableOldFiles=document.getElementById('old-files')
 
 function addItem(obj){
     var data=`Amount :- ${obj.amount}||
@@ -101,11 +103,13 @@ async function getProducts(){
     window.location.href='../Login/index.html'
     const headers={authorization:token}
     const result=await axios.get('http://localhost:3000/Expense/getExpenses',{headers})
-    
+    console.log(result)
     if(result.data.isPremium)
     {
         labelPremium.textContent="Premimum User"
         buttonPremium.style.display = 'none';
+        divPremiumData.style.display='block';
+        buttonDownload.style.display='block';
 
     }
     else{
@@ -115,6 +119,13 @@ async function getProducts(){
        
     for (const product of result.data.expense){
         addItem(product)
+        add2MonthlyTable(new Date(product.createdAt),product.description,product.category,product.amount)
+    }
+    add2YearlyTable(new Date(result.data.totalExpense.createdAt).getMonth(),result.data.totalExpense.sum)
+
+    for(const files of result.data.oldFiles){
+        
+        add2OldFilesTable(new Date(files.createdAt),files.fileUrl)
     }
 }
 getProducts();
@@ -144,10 +155,12 @@ buttonPremium.onclick=async event=>{
                     labelPremium.textContent="Premimum User"
                     
                     buttonShowLeaderboard.style.display='Block';
+                   
                     alert("Transaction Successfulll")
                 }
                 else{
                     console.log(res)
+                   
                 }
                     
             })
@@ -236,16 +249,16 @@ function add2MonthlyTable(date,description,category,expense){
     
 }
 
-function add2MonthlyTable(month,expense){
+function add2YearlyTable(month,expense){
     const tr=document.createElement('tr')
     const td1=document.createElement('td')
     const td2=document.createElement('td')
-    
+    const m=['January','Febraury','March','April','May','June','July','August','September','October','November','December']
 
     
     
 
-    td1.textContent=month;
+    td1.textContent=m[month];
     td2.textContent=expense;
    
     
@@ -258,6 +271,62 @@ function add2MonthlyTable(month,expense){
     
     
 }
+function add2OldFilesTable(date,link){
+    const tr=document.createElement('tr')
+    const td1=document.createElement('td')
+    const td2=document.createElement('td')
+    
+    const options = { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' };
+    const formattedDate = date.toLocaleDateString('en-US', options);
 
+    
+    
+    td1.textContent=formattedDate;
+    
+    const button=document.createElement('button')
+    button.textContent='Download'
+    td2.appendChild(button);
+
+    button.onclick=(event)=>{
+        const a=document.createElement('a')
+        a.href=link;
+        a.download='Expense.csv'
+        a.click();
+    }
+    
+    
+    
+    
+    
+
+    tr.appendChild(td1)
+    tr.appendChild(td2)
+    
+
+    tableOldFiles.appendChild(tr)
+    
+    
+}
+
+
+buttonDownload.onclick=async event=>{
+
+    const token=localStorage.getItem('token')
+
+    if(token==null)
+    window.location.href='../Login/index.html'
+    const headers={authorization:token}
+    try
+    {
+        const result=await axios.get('http://localhost:3000/User/download',{headers})
+        console.log(result)
+        const aelement=document.createElement('a')
+        aelement.href=result.data.fileUrl;
+        aelement.download=encodeURIComponent('Expense.csv')
+        aelement.click();
+    }catch(err){
+        console.log(err.response.data)
+    }
+    }
 
 

@@ -1,7 +1,44 @@
 const Expense=require('../Models/Expense')
 const SumExpense=require('../Models/SumExpense')
 const sequelize=require('../database')
+const AWS=require('aws-sdk')
 
+function upload2S3(data,fileName,cb){
+
+    const BUCKET_NAME='expensetrackingapp8677';
+    const IAM_USER_KEY=process.env.IAM_USER_KEY;
+    const IAM_USER_SECRET=process.env.IAM_USER_SECRET;
+
+    let s3bucket=new AWS.S3({
+        accessKeyId:IAM_USER_KEY,
+        secretAccessKey:IAM_USER_SECRET,
+       //Bucket:BUCKET_NAME
+    })
+
+   
+    var params={
+        Bucket:BUCKET_NAME,
+        Key:fileName,
+        Body:data,
+        ACL:'public-read'
+    }
+
+    return new Promise((resolve,reject)=>{
+        s3bucket.upload(params,(err,response)=>{
+            if(err){
+                reject(err)
+            }
+            else
+            {
+                
+               resolve(response)
+            }
+        })
+    })
+
+    
+
+}
 
 exports.postAddExpense=async (req,res,next)=>{
     const transaction=await sequelize.transaction();
@@ -29,11 +66,13 @@ exports.postAddExpense=async (req,res,next)=>{
 }
 
 
-exports.getExpenses=(req,res,next)=>{
+exports.getExpenses= async (req,res,next)=>{
+    const oldFiles=await getOldFiles(req.user);
     req.user.getExpenses({where:{userId:req.user.id}})
-    .then(expense=>{
+    .then(async expense=>{
 
-        const data={expense,isPremium:req.user.isPremium}
+        const totalExpense=await SumExpense.findOne({where:{UserId:req.user.id}})
+        const data={expense,oldFiles,isPremium:req.user.isPremium,totalExpense}
         res.json(data)
     })
     .catch(err=>{
@@ -64,4 +103,32 @@ exports.getDeleteExpense=async(req,res,next)=>{
         res.status(500).json({error:"Something went wrong"})
         await transaction.rollback()
     }
+}
+
+exports.getDownloadExpense=async(req,res,next)=>{
+    try{
+        
+            
+        const expense=await req.user.getExpenses();
+    
+        const stringfiyData=JSON.stringify(expense)
+        const userId=req.user.id;
+
+        const fileName=`Expense${userId}/${new Date()}.txt`
+        const response=await upload2S3(stringfiyData,fileName)
+        
+        await req.user.createFiledownload({fileUrl:response.Location})
+
+        res.json({fileUrl:response.Location,status:true})
+    }catch(err)
+    {
+        console.log(err)
+        res.status(500).json({fileUrl:'',status:false})
+    }
+}
+
+
+async function getOldFiles(user){
+    const data=await user.getFiledownloads();
+    return data
 }
