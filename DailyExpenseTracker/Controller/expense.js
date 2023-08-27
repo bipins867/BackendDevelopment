@@ -80,6 +80,30 @@ exports.getExpenses= async (req,res,next)=>{
     })
 }
 
+exports.getExpenseByPage=async(req,res,next)=>{
+    const page=parseInt(req.params.page);
+    
+    
+    const pageLimit=parseInt(req.headers.pagelimit);
+    try{
+        const count=await req.user.countExpenses({where:{UserId:req.user.id}})
+        //console.log(count)
+        const data=await Expense.findAll({
+            offset:(page-1)*pageLimit,
+            limit:pageLimit,
+            where:{UserId:req.user.id}
+        })
+        //console.log(data)
+        res.json({data,count,page})
+
+    }
+    catch(err){
+        console.log(err)
+        res.status(500).json({err:"Something went wrong"})
+    }
+    
+}
+
 exports.getDeleteExpense=async(req,res,next)=>{
     const transaction=await sequelize.transaction();
     try{

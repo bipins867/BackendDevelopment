@@ -15,6 +15,17 @@ const tableMonthly=document.getElementById('monthly-table')
 const divPremiumData=document.getElementById('premium-data')
 const buttonDownload=document.getElementById('download')
 const tableOldFiles=document.getElementById('old-files')
+const buttonPrev=document.getElementById('prevButton')
+const buttonNext=document.getElementById('nextButton')
+
+var page=1;
+
+
+function clearList(){
+    while(list.firstChild){
+        list.removeChild(list.firstChild);
+    }
+}
 
 function addItem(obj){
     var data=`Amount :- ${obj.amount}||
@@ -95,6 +106,63 @@ const addFunction=async event=>{
     
 }
 
+function getMaxPage(count,pageLimit){
+    const x1=parseInt(count/pageLimit)
+    const x2=count/pageLimit;
+
+    if(x2>x1){
+        return x1+1;
+    }
+    else{
+        return x1;
+    }
+}
+
+
+async function getExpenseByPage(page){
+    const token=localStorage.getItem('token')
+    clearList();
+    if(token==null)
+    window.location.href='../Login/index.html'
+    
+    const pageLimit=4
+    const headers={authorization:token,pageLimit}
+    const result=await axios.get(`http://localhost:3000/Expense/getExpenseByPage/${page}`,{headers})
+
+    const data=result.data.data;
+    const count=result.data.count;
+
+    const maxPage=getMaxPage(count,pageLimit)
+    for (const product of result.data.data){
+        addItem(product)
+    }
+    if(page==1){
+        buttonPrev.style.display='none'
+    }
+    else if(page==maxPage){
+        buttonNext.style.display='none'
+    }
+    else{
+        buttonNext.style.display='block'
+        buttonPrev.style.display='block'
+    }
+   
+}
+buttonNext.onclick=(event)=>{
+    page=page+1;
+    getExpenseByPage(page);
+}
+buttonPrev.onclick=(event)=>{
+    page=page-1;
+    getExpenseByPage(page)
+}
+document.addEventListener('DOMContentLoaded',(event)=>{
+    buttonPrev.textContent='<'
+    buttonNext.textContent='>'
+    getProducts();
+    getExpenseByPage(1);
+})
+
 form.onsubmit=addFunction
 async function getProducts(){
     const token=localStorage.getItem('token')
@@ -103,12 +171,12 @@ async function getProducts(){
     window.location.href='../Login/index.html'
     const headers={authorization:token}
     const result=await axios.get('http://localhost:3000/Expense/getExpenses',{headers})
-    console.log(result)
+    
     if(result.data.isPremium)
     {
         labelPremium.textContent="Premimum User"
         buttonPremium.style.display = 'none';
-        divPremiumData.style.display='block';
+        //divPremiumData.style.display='block';
         buttonDownload.style.display='block';
 
     }
@@ -116,19 +184,21 @@ async function getProducts(){
         buttonShowLeaderboard.style.display='none';
     }
     labelLedarboard.style.display='none'
-       
-    for (const product of result.data.expense){
-        addItem(product)
-        add2MonthlyTable(new Date(product.createdAt),product.description,product.category,product.amount)
-    }
-    add2YearlyTable(new Date(result.data.totalExpense.createdAt).getMonth(),result.data.totalExpense.sum)
-
+    if(result.data.isPremium){
+            
+        for (const product of result.data.expense){
+            //addItem(product)
+            add2MonthlyTable(new Date(product.createdAt),product.description,product.category,product.amount)
+        }
+        add2YearlyTable(new Date(result.data.totalExpense.createdAt).getMonth(),result.data.totalExpense.sum)
+    
     for(const files of result.data.oldFiles){
         
         add2OldFilesTable(new Date(files.createdAt),files.fileUrl)
     }
 }
-getProducts();
+}
+
 
 
 buttonPremium.onclick=async event=>{
@@ -327,6 +397,6 @@ buttonDownload.onclick=async event=>{
     }catch(err){
         console.log(err.response.data)
     }
-    }
+}
 
 
