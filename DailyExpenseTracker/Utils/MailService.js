@@ -10,7 +10,7 @@ console.log(process.env.API_KEY)
 
 const tranEmailApi=new Sib.TransactionalEmailsApi()
 const sender={
-    email:'bipinsingh911867@gmail.com'
+    email:process.env.MAIL_SENDER_EMAIL
 }
 
 exports.sendMail=async (reciverEmail,subject,textContent)=>{

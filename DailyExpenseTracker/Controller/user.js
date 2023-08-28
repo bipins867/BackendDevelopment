@@ -74,7 +74,7 @@ exports.postLogin=async(req,res,next)=>{
                 
                 if(response)
                 {
-                    const token=jwt.sign({name:user.dataValues.name,id:user.dataValues.id},'SecretKey')
+                    const token=jwt.sign({name:user.dataValues.name,id:user.dataValues.id},process.env.JWT_SECRET_KEY)
                     //console.log(token)
                     res.json({status:"Login Successfull",token:token})
                 }

@@ -5,6 +5,9 @@ const express=require('express')
 const cors=require('cors')
 const bodyParser=require('body-parser')
 const path=require('path')
+const helmet=require('helmet')
+const fs=require('fs')
+const morgan=require('morgan')
 
 
 const db=require('./database')
@@ -24,7 +27,13 @@ const FileDownload=require('./Models/FileDownload')
 
 app=express()
 
+const fileSystem=fs.createWriteStream(
+    './access.log',
+    {flags:'a'}
+)
 
+app.use(helmet())
+app.use(morgan('combined',{stream:fileSystem}))
 //app.use(express.static(path.join(__dirname, 'Public')));
 
 app.use(cors())
@@ -65,6 +74,6 @@ app.use('/',(req,res,next)=>{
 db.sync()
 .then(()=>{
     
-app.listen(3000)
+app.listen(process.env.APP_PORT)
 })
 .catch(err=>console.log(err))

@@ -11,7 +11,10 @@
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.1.1",
+    "compression": "^1.7.4",
     "dotenv": "^16.3.1",
+    "helmet": "^7.0.0",
+    "morgan": "^1.10.0",
     "nodemon": "^3.0.1",
     "razorpay": "^2.9.2",
     "sib-api-v3-sdk": "^8.5.0"

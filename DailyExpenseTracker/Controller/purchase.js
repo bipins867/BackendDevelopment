@@ -8,7 +8,7 @@ exports.getCreateOrder=(req,res,next)=>{
     
         if(req.user.isPremium)
         return res.status(202).json({status:"Already a premimum member"})
-        var instance = new Razorpay({ key_id: 'rzp_test_HRAhO02WAcf3LK', key_secret: 'tQjY4BFqjKemShxrlgQBr6Ym' })
+        var instance = new Razorpay({ key_id: process.env.RAZORPAY_KEY_ID, key_secret: process.env.RAZORPAY_KEY_ID })
 
 
         instance.orders.create({
@@ -80,7 +80,7 @@ exports.updateTransactionStatus=(req,res,next)=>{
     try{
         const orderId=req.body.orderId;
         
-        var instance = new Razorpay({ key_id: 'rzp_test_HRAhO02WAcf3LK', key_secret: 'tQjY4BFqjKemShxrlgQBr6Ym' })
+        var instance = new Razorpay({ key_id: process.env.RAZORPAY_KEY_ID, key_secret: process.env.RAZORPAY_KEY_ID })
 
         instance.orders.fetchPayments(orderId,(err,response)=>{
             if(err || response.count==0){

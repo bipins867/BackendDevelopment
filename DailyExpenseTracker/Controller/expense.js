@@ -5,7 +5,7 @@ const AWS=require('aws-sdk')
 
 function upload2S3(data,fileName,cb){
 
-    const BUCKET_NAME='expensetrackingapp8677';
+    const BUCKET_NAME=process.env.AWS_BUCKET_NAME;
     const IAM_USER_KEY=process.env.IAM_USER_KEY;
     const IAM_USER_SECRET=process.env.IAM_USER_SECRET;
 
